@@ -8,6 +8,14 @@ from django.http import Http404
 # Create your views here.
 class VulnerabilityList(APIView):
     def get(self, request, format=None):
+        
+        baseSeverityMetric = request.query_params.get('baseSeverityMetric', None)    
+        
+        if baseSeverityMetric is not None:
+            vulnerabilities = Vulnerability.objects.filter(baseSeverityMetric=baseSeverityMetric)
+            serializer = VulnerabilitySerializer(vulnerabilities, many=True)
+            return Response(serializer.data)
+        
         vulnerabilities = Vulnerability.objects.all()
         serializer = VulnerabilitySerializer(vulnerabilities, many=True)
         return Response(serializer.data)
