@@ -4,6 +4,7 @@ from vulnerabilities.serializers import VulnerabilitySerializer, FixVulnerabilit
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
+from django.db.models import Count
 
 # Create your views here.
 class VulnerabilityList(APIView):
@@ -40,4 +41,18 @@ class FixVulnerability(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class VulnerabilitiesSummary(APIView):
+    def get(self, request, format=None):
+        
+        summary = (
+            Vulnerability.objects.values('baseSeverityMetric')
+            .annotate(total=Count('baseSeverityMetric'))
+            .order_by('-total')
+        )
+        
+        # Crear diccionario para una respuesta más clara
+        result = {item['baseSeverityMetric']: item['total'] for item in summary}
+        
+        return Response(result)
         
