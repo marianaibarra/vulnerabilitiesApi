@@ -69,6 +69,4 @@ test-results/
 .git/
 
 # Modulos
-
-vulnerabilities/__pycache__
-vulnerabilitiesApi/__pycache__
+*.__pycache__
