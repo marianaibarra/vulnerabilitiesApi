@@ -22,7 +22,7 @@ class FixVulnerability(APIView):
     def post(self, request, format=None):
         serializer = FixVulnerabilitySerializer(data=request.data)
         if serializer.is_valid():
-            vulnerability = Vulnerability.objects.get(id=serializer.data['id'])
+            vulnerability = Vulnerability.objects.get(cveId=serializer.data['cveId'])
             vulnerability.hasBeenFixed = serializer.data['hasBeenFixed']
             vulnerability.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

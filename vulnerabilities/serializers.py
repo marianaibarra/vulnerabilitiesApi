@@ -4,10 +4,10 @@ from vulnerabilities.models import Vulnerability, VULNERABILITY_STATUS
 class VulnerabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Vulnerability
-        fields = ['id', 'sourceIdentifier', 'published', 'vulnStatus', 'description', 'hasBeenFixed', 'baseSeverityMetric']
+        fields = ['id', 'cveId', 'published', 'vulnStatus', 'description', 'hasBeenFixed', 'baseSeverityMetric']
         extra_kwargs = {
             'vulnStatus': {'choices': VULNERABILITY_STATUS},
-            'sourceIdentifier': {'required': True},
+            'cveId': {'required': True},
             'published': {'required': True},
             'description': {'required': True},
         }
@@ -15,7 +15,7 @@ class VulnerabilitySerializer(serializers.ModelSerializer):
 class FixVulnerabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Vulnerability
-        fields = ['id', 'hasBeenFixed']
+        fields = ['cveId', 'hasBeenFixed']
         extra_kwargs = {
             'hasBeenFixed': {'required': True},
         }
