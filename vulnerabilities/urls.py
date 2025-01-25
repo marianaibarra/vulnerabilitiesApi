@@ -5,7 +5,7 @@ from vulnerabilities import views
 urlpatterns = [
     path('vulnerabilities/', views.VulnerabilityList.as_view()),
     path('unfixedVulnerabilities/', views.UnfixedVulnerabilitiesList.as_view()),
-    path('fixVulnerability/', views.FixVulnerability.as_view()),
+    path('fixVulnerability/<str:pk>', views.FixVulnerability.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

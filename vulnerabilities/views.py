@@ -19,11 +19,17 @@ class UnfixedVulnerabilitiesList(APIView):
         return Response(serializer.data)
 
 class FixVulnerability(APIView):
-    def post(self, request, format=None):
-        serializer = FixVulnerabilitySerializer(data=request.data)
+    def get_object(self, pk):
+        try:
+            return Vulnerability.objects.get(cveId=pk)
+        except Vulnerability.DoesNotExist:
+            raise Http404
+    
+    def post(self, request, pk, format=None):
+        vulnerability = self.get_object(pk=pk)
+        serializer = FixVulnerabilitySerializer(vulnerability, data=request.data)
         if serializer.is_valid():
-            vulnerability = Vulnerability.objects.get(cveId=serializer.data['cveId'])
-            vulnerability.hasBeenFixed = serializer.data['hasBeenFixed']
-            vulnerability.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        

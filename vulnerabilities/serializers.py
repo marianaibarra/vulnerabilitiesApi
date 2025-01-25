@@ -15,7 +15,7 @@ class VulnerabilitySerializer(serializers.ModelSerializer):
 class FixVulnerabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Vulnerability
-        fields = ['cveId', 'hasBeenFixed']
+        fields = ['hasBeenFixed']
         extra_kwargs = {
             'hasBeenFixed': {'required': True},
         }
