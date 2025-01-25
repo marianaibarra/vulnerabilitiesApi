@@ -11,3 +11,11 @@ class VulnerabilitySerializer(serializers.ModelSerializer):
             'published': {'required': True},
             'description': {'required': True},
         }
+        
+class FixVulnerabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vulnerability
+        fields = ['id', 'hasBeenFixed']
+        extra_kwargs = {
+            'hasBeenFixed': {'required': True},
+        }
