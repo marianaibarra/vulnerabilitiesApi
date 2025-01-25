@@ -1,0 +1,74 @@
+# Archivos y carpetas de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Archivos de entorno virtual
+env/
+venv/
+ENV/
+venv.bak/
+*.env
+
+# Archivos de configuración sensible
+.env
+*.local
+
+# Archivos de dependencias
+Pipfile
+Pipfile.lock
+poetry.lock
+
+# Archivos de bases de datos locales
+*.sqlite3
+
+# Archivos y carpetas creados por el sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de compilación
+*.egg
+*.egg-info/
+dist/
+build/
+*.manifest
+*.spec
+
+# Archivos de logs
+*.log
+*.pot
+*.pid
+
+# Archivos creados por editores de texto/IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Configuraciones de ejecución de Django
+db.sqlite3
+media/
+staticfiles/
+
+# Archivos de migraciones temporales (opcional)
+migrations/  # Solo si tienes un sistema automatizado para manejarlas
+
+# Archivos y carpetas de Docker (si lo usas)
+*.swp
+.dockerignore
+
+# Archivos de tests
+.coverage
+coverage.xml
+htmlcov/
+test-results/
+
+# Configuración de Git
+.git/
+
+# Modulos
+
+vulnerabilities/__pycache__
+vulnerabilitiesApi/__pycache__
