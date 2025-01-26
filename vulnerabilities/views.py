@@ -12,7 +12,9 @@ nist_url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 # Create your views here.
 class VulnerabilityList(APIView):
     def get(self, request, format=None):
-        
+        """
+        List all vulnerabilities that have not been fixed yet
+        """
         try:
             resultsPerPage = request.query_params.get('resultsPerPage', None)
             startIndex = request.query_params.get('startIndex', None)
@@ -79,6 +81,11 @@ class VulnerabilityList(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class UnfixedVulnerabilitiesList(APIView):
+    
+    """
+    List all vulnerabilities that have not been fixed yet
+    """
+    
     def get(self, request, format=None):
         vulnerabilities = Vulnerability.objects.filter(hasBeenFixed=False)
         serializer = VulnerabilitySerializer(vulnerabilities, many=True)
@@ -91,6 +98,10 @@ class FixVulnerability(APIView):
         except Vulnerability.DoesNotExist:
             raise Http404
     
+    """
+    Fix a vulnerability with the given cveId
+    """
+    
     def post(self, request, pk, format=None):
         vulnerability = self.get_object(pk=pk)
         serializer = FixVulnerabilitySerializer(vulnerability, data=request.data)
@@ -100,6 +111,11 @@ class FixVulnerability(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class VulnerabilitiesSummary(APIView):
+    
+    """
+    List the number of vulnerabilities by baseSeverityMetric
+    """
+    
     def get(self, request, format=None):
         
         summary = (
