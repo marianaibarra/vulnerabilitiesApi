@@ -84,7 +84,7 @@ class UnfixedVulnerabilitiesList(APIView):
     def get(self, request, format=None):
         vulnerabilities = Vulnerability.objects.filter(hasBeenFixed=False)
         serializer = VulnerabilitySerializer(vulnerabilities, many=True)
-        return Response(serializer.data)
+        return Response({ "results": len(serializer.data), "vulnerabilities": serializer.data} )
 
 class FixVulnerability(APIView):
     def get_object(self, pk):
