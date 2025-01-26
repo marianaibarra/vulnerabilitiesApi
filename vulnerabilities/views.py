@@ -7,6 +7,8 @@ from django.http import Http404
 from django.db.models import Count
 import requests
 from rest_framework import permissions
+from rest_framework.decorators import api_view
+from rest_framework.reverse import reverse
 
 nist_url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 
@@ -128,4 +130,15 @@ class VulnerabilitiesSummary(APIView):
         result = {item['baseSeverityMetric']: item['total'] for item in summary}
         
         return Response(result)
-        
+    
+
+# Root view
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'vulnerabilities': reverse('vulnerability-list', request=request, format=format),
+        'unfixed-vulnerabilities': reverse('unfixed-vulnerabilities-list', request=request, format=format),
+        'fix-vulnerability': reverse('fix-vulnerability', request=request, format=format),
+        'vulnerabilities-summary': reverse('vulnerabilities-summary', request=request, format=format),
+    })
