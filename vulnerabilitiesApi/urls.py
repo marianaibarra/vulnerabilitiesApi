@@ -18,4 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('', include('vulnerabilities.urls')),
+    path('', include('accounts.urls')),
+    path('auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

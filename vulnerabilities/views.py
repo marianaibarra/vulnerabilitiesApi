@@ -6,6 +6,7 @@ from rest_framework import status
 from django.http import Http404
 from django.db.models import Count
 import requests
+from rest_framework import permissions
 
 nist_url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 
@@ -72,7 +73,6 @@ class VulnerabilityList(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class UnfixedVulnerabilitiesList(APIView):
-    
     """
     TODO: Se puede implementar un paginador para mostrar las vulnerabilidades de 10 en 10
     """
@@ -87,6 +87,9 @@ class UnfixedVulnerabilitiesList(APIView):
         return Response({ "results": len(serializer.data), "vulnerabilities": serializer.data} )
 
 class FixVulnerability(APIView):
+    
+    permission_classes = [permissions.IsAuthenticated]
+    
     def get_object(self, pk):
         try:
             return Vulnerability.objects.get(cveId=pk)

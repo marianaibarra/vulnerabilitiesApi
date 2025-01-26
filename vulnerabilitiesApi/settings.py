@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     # Rest framework
     'rest_framework',
     # Modules
-    'vulnerabilities'
+    'vulnerabilities',
+    # Users
+    'accounts'
 ]
 
 MIDDLEWARE = [
