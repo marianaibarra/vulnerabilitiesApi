@@ -58,11 +58,17 @@ class VulnerabilityList(APIView):
                         vulnerabilities_mapped.pop(i)
                         break
                     
-            serializer = VulnerabilitySerializer(data=vulnerabilities_mapped, many=True)
+            # Excluir las vulnerabilidades que ya han sido registradas en la base de datos
+            filtered_vulnerabilities = []
+            for vulnerability in vulnerabilities_mapped:
+                if not Vulnerability.objects.filter(cveId=vulnerability.get('cveId')).exists():
+                    filtered_vulnerabilities.append(vulnerability)
+            
+            serializer = VulnerabilitySerializer(data=filtered_vulnerabilities, many=True)
             
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                return Response({ **params, "vulnerabilities": vulnerabilities_mapped})
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
