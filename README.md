@@ -45,5 +45,5 @@ docker build . -t vulnerabilities_api -f Dockerfile
 2. Ejecuta el contenedor pasando las variables de entorno
 
 ```bash
-docker run --env-file .env -p 8000:<AVAILABLE_PORT> vulnerabilities_api:latest
+docker run --env-file .env -p <AVAILABLE_PORT>:8000 vulnerabilities_api:latest
 ```
