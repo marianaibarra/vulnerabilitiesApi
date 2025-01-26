@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     'vulnerabilities',
     # Users
     'accounts',
-    # Static files
-    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
@@ -87,10 +85,10 @@ WSGI_APPLICATION = 'vulnerabilitiesApi.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config('NAME'),
-        "USER": config('DB_USER'),
-        "PASSWORD": config('PASSWORD'),
-        "HOST": config('HOST'),
+        "NAME": config('NAME', default='vulnerabilities'),
+        "USER": config('DB_USER', default='marianazapata'),
+        "PASSWORD": config('PASSWORD', default='newjeans'),
+        "HOST": config('HOST', default='localhost'),
         "PORT": "5432",
     }
 }
@@ -130,9 +128,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [str(BASE_DIR.joinpath('static'))]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Ubicación de archivos estáticos
+STATIC_URL = '/static/'
+# Path absoluto donde se recogen los archivos estáticos (lo usará collectstatic)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Habilitar compresión
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
