@@ -31,6 +31,8 @@ class VulnerabilityList(APIView):
             
             vulnerabilities_mapped = []
             
+            vulnerabilities_saved = Vulnerability.objects.filter(hasBeenFixed=True)
+            
             # Mapear los datos de la API a los campos del modelo
             for vulnerability in vulnerabilities_data:
                 
@@ -43,7 +45,7 @@ class VulnerabilityList(APIView):
                     v.get('descriptions', [{}])[0].get('value', 'N/A')
                     if v.get('descriptions') else 'N/A'
                 )
-                hasBeenFixed = False
+                hasBeenFixed = vulnerabilities_saved.filter(cveId=cveId).exists() # Verificar si la vulnerabilidad ya ha sido registrada y está fixed, en cuyo caso colocar en True
                 baseSeverityMetric = (
                     v.get('metrics', {}).get('cvssMetricV2', {})[0].get('baseSeverity', 'N/A')
                     if v.get('metrics', {}).get('cvssMetricV2') else 'N/A'
