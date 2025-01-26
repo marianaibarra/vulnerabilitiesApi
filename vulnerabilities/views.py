@@ -55,15 +55,6 @@ class VulnerabilityList(APIView):
                     "hasBeenFixed": hasBeenFixed,
                     "baseSeverityMetric": baseSeverityMetric
                 })
-            
-            vulnerabilities_fixed = Vulnerability.objects.filter(hasBeenFixed=True)
-            
-            # Eliminar las vulnerabilidades que ya han sido fixeadas de vulnerabilities_mapped, no importa hacer este paso antes o después de registrar las vulnerabilidades en la base de datos ya que solo las fixeadas (hasBeenFixed=True) serán eliminadas, y estás deben estar en la base de datos
-            for vulnerability in vulnerabilities_fixed:
-                for i in range(len(vulnerabilities_mapped)):
-                    if vulnerability.cveId == vulnerabilities_mapped[i].get('cveId'):
-                        vulnerabilities_mapped.pop(i)
-                        break
                     
             # Excluir las vulnerabilidades que ya han sido registradas en la base de datos
             filtered_vulnerabilities = []
@@ -75,12 +66,16 @@ class VulnerabilityList(APIView):
             
             if serializer.is_valid():
                 serializer.save()
-                return Response({ **params, "vulnerabilities": vulnerabilities_mapped})
+                return Response({ **params, "results": len(vulnerabilities_mapped), "vulnerabilities": vulnerabilities_mapped})
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class UnfixedVulnerabilitiesList(APIView):
+    
+    """
+    TODO: Se puede implementar un paginador para mostrar las vulnerabilidades de 10 en 10
+    """
     
     """
     List all vulnerabilities that have not been fixed yet
