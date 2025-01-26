@@ -40,10 +40,20 @@ python manage.py runserver
 
 ```bash
 docker build . -t vulnerabilities_api -f Dockerfile
-````
+```
 
 2. Ejecuta el contenedor pasando las variables de entorno
 
-```bash
+``` bash
 docker run --env-file .env -p <AVAILABLE_PORT>:8000 vulnerabilities_api:latest
 ```
+
+---
+
+# Arquitectura Cloud
+
+Se utilizó el proveedor Google Cloud Platform para desplegar la plataforma
+
+**Enlace:** [Url API](https://vulnerabilities-api-561467256431.us-central1.run.app)
+
+![Architecture](/images/architecture.png)
