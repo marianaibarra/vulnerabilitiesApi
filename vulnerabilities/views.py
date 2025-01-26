@@ -36,10 +36,15 @@ class VulnerabilityList(APIView):
                 cveId = v.get('id')
                 published = v.get('published')
                 vulnStatus = v.get('vulnStatus')
-                description = v.get('descriptions', [])[0].get('value', 'N/A')
+                description = (
+                    v.get('descriptions', [{}])[0].get('value', 'N/A')
+                    if v.get('descriptions') else 'N/A'
+                )
                 hasBeenFixed = False
-                baseSeverityMetric = v.get('metrics', {}).get('cvssMetricV2', {})[0].get('baseSeverity', 'N/A')
-                
+                baseSeverityMetric = (
+                    v.get('metrics', {}).get('cvssMetricV2', {})[0].get('baseSeverity', 'N/A')
+                    if v.get('metrics', {}).get('cvssMetricV2') else 'N/A'
+                )
                 vulnerabilities_mapped.append({
                     "cveId": cveId,
                     "published": published,
