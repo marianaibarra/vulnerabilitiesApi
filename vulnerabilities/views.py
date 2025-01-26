@@ -5,21 +5,67 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 from django.db.models import Count
+import requests
+
+nist_url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 
 # Create your views here.
 class VulnerabilityList(APIView):
     def get(self, request, format=None):
         
-        baseSeverityMetric = request.query_params.get('baseSeverityMetric', None)    
-        
-        if baseSeverityMetric is not None:
-            vulnerabilities = Vulnerability.objects.filter(baseSeverityMetric=baseSeverityMetric)
-            serializer = VulnerabilitySerializer(vulnerabilities, many=True)
-            return Response(serializer.data)
-        
-        vulnerabilities = Vulnerability.objects.all()
-        serializer = VulnerabilitySerializer(vulnerabilities, many=True)
-        return Response(serializer.data)
+        try:
+            resultsPerPage = request.query_params.get('resultsPerPage', None)
+            startIndex = request.query_params.get('startIndex', None)
+            
+            params = {}
+            
+            params["resultsPerPage"] = resultsPerPage if resultsPerPage is not None else 10
+            params["startIndex"] = startIndex if startIndex is not None else 0
+            
+            vulnerabilities_api = requests.get(nist_url, params=params)
+            
+            vulnerabilities_data = vulnerabilities_api.json().get('vulnerabilities')
+            
+            vulnerabilities_mapped = []
+            
+            # Mapear los datos de la API a los campos del modelo
+            for vulnerability in vulnerabilities_data:
+                
+                v = vulnerability.get('cve')
+                
+                cveId = v.get('id')
+                published = v.get('published')
+                vulnStatus = v.get('vulnStatus')
+                description = v.get('descriptions', [])[0].get('value', 'N/A')
+                hasBeenFixed = False
+                baseSeverityMetric = v.get('metrics', {}).get('cvssMetricV2', {})[0].get('baseSeverity', 'N/A')
+                
+                vulnerabilities_mapped.append({
+                    "cveId": cveId,
+                    "published": published,
+                    "vulnStatus": vulnStatus,
+                    "description": description,
+                    "hasBeenFixed": hasBeenFixed,
+                    "baseSeverityMetric": baseSeverityMetric
+                })
+            
+            vulnerabilities_fixed = Vulnerability.objects.filter(hasBeenFixed=True)
+            
+            # Eliminar las vulnerabilidades que ya han sido fixeadas de vulnerabilities_mapped
+            for vulnerability in vulnerabilities_fixed:
+                for i in range(len(vulnerabilities_mapped)):
+                    if vulnerability.cveId == vulnerabilities_mapped[i].get('cveId'):
+                        vulnerabilities_mapped.pop(i)
+                        break
+                    
+            serializer = VulnerabilitySerializer(data=vulnerabilities_mapped, many=True)
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class UnfixedVulnerabilitiesList(APIView):
     def get(self, request, format=None):

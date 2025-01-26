@@ -12,12 +12,12 @@ VULNERABILITY_STATUS = [
 
 BASE_SEVERITY_METRIC = [
     ('N/A', 'N/A'),
-    ('Low', 'Low'),
-    ('LowMedium', 'LowMedium'),
-    ('Medium', 'Medium'),
-    ('MediumHigh', 'MediumHigh'),
-    ('High', 'High'),
-    ('NotDefined', 'NotDefined'),
+    ('LOW', 'LOW'),
+    ('LOWMEDIUM', 'LOWMEDIUM'),
+    ('MEDIUM', 'MEDIUM'),
+    ('MEDIUMHIGH', 'MEDUIMHIGH'),
+    ('HIGH', 'HIGH'),
+    ('NOTDEFINED', 'NOTDEFINED'),
 ]
 
 # Create your models here.
