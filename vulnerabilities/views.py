@@ -51,7 +51,7 @@ class VulnerabilityList(APIView):
             
             vulnerabilities_fixed = Vulnerability.objects.filter(hasBeenFixed=True)
             
-            # Eliminar las vulnerabilidades que ya han sido fixeadas de vulnerabilities_mapped
+            # Eliminar las vulnerabilidades que ya han sido fixeadas de vulnerabilities_mapped, no importa hacer este paso antes o después de registrar las vulnerabilidades en la base de datos ya que solo las fixeadas (hasBeenFixed=True) serán eliminadas, y estás deben estar en la base de datos
             for vulnerability in vulnerabilities_fixed:
                 for i in range(len(vulnerabilities_mapped)):
                     if vulnerability.cveId == vulnerabilities_mapped[i].get('cveId'):
