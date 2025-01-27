@@ -28,7 +28,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://vulnerabilities-api-561467256431.us-central1.run.app']
 
 # Application definition
 
