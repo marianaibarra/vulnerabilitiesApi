@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from vulnerabilities.models import Vulnerability
-from vulnerabilities.serializers import VulnerabilitySerializer, FixVulnerabilitySerializer
+from vulnerabilities.serializers import VulnerabilitySerializer, FixVulnerabilitySerializer, UnfixedVulnerabilitySerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
@@ -86,9 +86,25 @@ class UnfixedVulnerabilitiesList(APIView):
     """
     
     def get(self, request, format=None):
-        vulnerabilities = Vulnerability.objects.filter(hasBeenFixed=False)
-        serializer = VulnerabilitySerializer(vulnerabilities, many=True)
-        return Response({ "results": len(serializer.data), "vulnerabilities": serializer.data} )
+        try:
+            
+            newFieldValue = request.query_params.get('NewFieldValue', None)
+            
+            vulnerabilities = Vulnerability.objects.filter(hasBeenFixed=False)
+            
+            vulnerabilities__mapped = []
+            
+            for vulnerability in vulnerabilities.values():
+                vulnerabilities__mapped.append({
+                    **vulnerability,
+                    "newField": newFieldValue
+                })
+            
+            serializer = UnfixedVulnerabilitySerializer(vulnerabilities__mapped, many=True)
+            return Response({ "results": len(serializer.data), "vulnerabilities": serializer.data} )
+        except Exception as e: 
+            print(e)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class FixVulnerability(APIView):
     
