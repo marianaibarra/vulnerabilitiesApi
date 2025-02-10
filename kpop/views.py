@@ -39,7 +39,11 @@ class KpopList(APIView):
             
             """
             
-            return Response(leaders_nicer)
+            most_difference_wgcm = Idol.objects.values('name', 'stage_name', 'height_cm', 'weight_kg').annotate(difference=F("height_cm") - F("weight_kg")).order_by("-difference")[:10]
+            
+            most_difference_wgcm_nicer = [{'stage_name': idol['stage_name'], 'difference': idol['difference']} for idol in most_difference_wgcm]
+            
+            return Response(most_difference_wgcm_nicer)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
