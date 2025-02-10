@@ -4,7 +4,7 @@ from vulnerabilities.serializers import VulnerabilitySerializer, FixVulnerabilit
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
-from django.db.models import Count
+from django.db.models import Count, Q
 import requests
 from rest_framework import permissions
 from rest_framework.decorators import api_view
@@ -62,6 +62,7 @@ class VulnerabilityList(APIView):
                 })
                     
             # Excluir las vulnerabilidades que ya han sido registradas en la base de datos
+            """TODO: Creo que esto lo puedo hacer sobreescribiendo el metodo @save del modelo."""
             filtered_vulnerabilities = []
             for vulnerability in vulnerabilities_mapped:
                 if not Vulnerability.objects.filter(cveId=vulnerability.get('cveId')).exists():
@@ -90,7 +91,10 @@ class UnfixedVulnerabilitiesList(APIView):
             
             newFieldValue = request.query_params.get('NewFieldValue', None)
             
-            vulnerabilities = Vulnerability.objects.filter(hasBeenFixed=False)
+            vulnerabilities = Vulnerability.objects.exclude(    
+                baseSeverityMetric__contains="H", 
+                ).exclude(published__year=1995)
+            # .filter(published__year=1995, )
             
             vulnerabilities__mapped = []
             
@@ -99,6 +103,7 @@ class UnfixedVulnerabilitiesList(APIView):
                     **vulnerability,
                     "newField": newFieldValue
                 })
+            
             
             serializer = UnfixedVulnerabilitySerializer(vulnerabilities__mapped, many=True)
             return Response({ "results": len(serializer.data), "vulnerabilities": serializer.data} )
@@ -135,18 +140,31 @@ class VulnerabilitiesSummary(APIView):
     """
     
     def get(self, request, format=None):
-        
-        summary = (
-            Vulnerability.objects.values('baseSeverityMetric')
-            .annotate(total=Count('baseSeverityMetric'))
-            .order_by('-total')
-        )
-        
-        # Crear diccionario para una respuesta más clara
-        result = {item['baseSeverityMetric']: item['total'] for item in summary}
-        
-        return Response(result)
+        try:
+            summary = (
+                Vulnerability.objects
+                .values('baseSeverityMetric')
+                .annotate(baseseverity=Count('baseSeverityMetric', 
+                                             filter=~Q(published__gt="1991-01-01")
+                                             ))
+                .order_by('-baseseverity')
+                # .aggregate(something=Count('baseSeverityMetric'), minji=Count('baseSeverityMetric'))
+            )
+            
+            print(type(summary))
+            
+            # Crear diccionario para una respuesta más clara
+            result = {item['baseSeverityMetric']: item['baseseverity'] for item in summary}
+            
+            return Response(result)
+        except Exception as err:
+            print(err)
     
+
+class VulnerabilityDetail(APIView):
+    def get(self, request, pk, format=None):
+        print(type(pk), pk)
+        return Response("Hello", pk)
 
 # Root view
 

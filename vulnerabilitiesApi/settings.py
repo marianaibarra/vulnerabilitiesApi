@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'vulnerabilities',
     # Users
     'accounts',
+    # Kpop
+    'kpop'
 ]
 
 MIDDLEWARE = [

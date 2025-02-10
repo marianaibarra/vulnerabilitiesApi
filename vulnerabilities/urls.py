@@ -4,6 +4,8 @@ from vulnerabilities import views
 
 urlpatterns = [
     path('vulnerabilities/', views.VulnerabilityList.as_view()),
+    path('vulnerabilities/<pk>', views.VulnerabilityDetail.as_view()),
+    # path('vulnerabilities/<str:pk>', views.VulnerabilityDetail.as_view()),
     path('vulnerabilities/unfix/', views.UnfixedVulnerabilitiesList.as_view()),
     path('vulnerabilities/fix/<str:pk>/', views.FixVulnerability.as_view()),
     path("vulnerabilities/summary/", views.VulnerabilitiesSummary.as_view()),

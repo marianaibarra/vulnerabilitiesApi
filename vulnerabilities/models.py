@@ -31,3 +31,4 @@ class Vulnerability(models.Model):
     
     class Meta:
         ordering = ['published']
+       
